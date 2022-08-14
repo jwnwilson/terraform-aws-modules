@@ -73,7 +73,7 @@ resource "aws_api_gateway_base_path_mapping" "example" {
 }
 
 resource "aws_api_gateway_rest_api" "apiLambda" {
-  name        = "this_${var.environment}"
+  name        = "${var.project}_${var.environment}"
   description = "Auth API"
 }
 
