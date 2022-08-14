@@ -8,6 +8,10 @@ variable "environment" {}
 
 variable "project" {}
 
+variable "description" {
+  default = ""
+}
+
 variable "ecr_url" {}
 
 variable "lambda_command" {

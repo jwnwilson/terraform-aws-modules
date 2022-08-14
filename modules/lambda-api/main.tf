@@ -6,7 +6,7 @@ provider "aws" {
 }
 
 # Complete using this guide:
-# https://medium.com/@ilia.lazebnik/simplifying-aws-private-api-gateway-vpc-endpoint-association-with-terraform-b379a247afbf
+# https://medium.com/@ilia.lazebnik/simplifying-aws-private-lambda-gateway-vpc-endpoint-association-with-terraform-b379a247afbf
 
 #   If we attach our lambda to a VPC then we have to use a nat gateway for internet access
 #   Do not do this as this is expensive.
@@ -27,7 +27,7 @@ provider "aws" {
 # }
 
 # data "aws_vpc_endpoint_service" "test" {
-#   service = "execute-api"
+#   service = "execute-lambda"
 # }
 
 # resource "aws_vpc_endpoint" "pdf_vpc_endpoint" {
@@ -40,11 +40,11 @@ provider "aws" {
 #   security_group_ids = [module.vpc.default_security_group_id]
 # }
 
-module "api" {
+module "lambda" {
   source                  = "terraform-aws-modules/lambda/aws"
 
   function_name           = "${var.project}_${var.environment}"
-  description             = "PDF creator API"
+  description             = var.description
 
   create_package          = false
 
@@ -69,7 +69,7 @@ module "api" {
   # This can be used to reduce the cold starts of lambda
   # provisioned_concurrent_executions = 10
   # publish                 = true
-  
+
   environment_variables = merge(
     {
       ENVIRONMENT = var.environment
@@ -94,13 +94,13 @@ resource "aws_cloudwatch_event_rule" "every_one_minute" {
 resource "aws_cloudwatch_event_target" "check_foo_every_one_minute" {
   rule      = "${aws_cloudwatch_event_rule.every_one_minute.name}"
   target_id = "lambda"
-  arn       = "${module.pdf_api.lambda_function_arn}"
+  arn       = "${module.pdf_lambda.lambda_function_arn}"
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
-  function_name = "${module.pdf_api.lambda_function_name}"
+  function_name = "${module.pdf_lambda.lambda_function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.every_one_minute.arn}"
 }
@@ -126,7 +126,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "sqs-attach" {
-  role       = module.api.lambda_role_name
+  role       = module.lambda.lambda_role_name
   policy_arn = aws_iam_policy.sqs-s3-lambda-policy.arn
 }
 
