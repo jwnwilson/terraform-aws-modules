@@ -72,10 +72,7 @@ module "lambda" {
   )
 
   # override docker image command to run worker handler
-  for_each = var.lambda_command == "" ? [] : [1]
-  content {
-    image_config_command = [var.lambda_command]
-  }
+  image_config_command = var.lambda_command != null ? null : [var.lambda_command]
 
 }
 
