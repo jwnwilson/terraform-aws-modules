@@ -51,14 +51,8 @@ module "lambda" {
   image_uri               = "${var.ecr_url}:${var.docker_tag}"
   package_type            = "Image"
   
-  for_each = var.vpc_subnet_ids == "" ? [] : [1]
-  content {
-    vpc_subnet_ids        = var.vpc_subnet_ids
-  }
-  for_each = var.vpc_security_group_ids == "" ? [] : [1]
-  content {
-    vpc_security_group_ids  = [var.vpc_security_group_ids]
-  }
+  vpc_subnet_ids          = var.vpc_subnet_ids != null ? null : var.vpc_subnet_ids
+  vpc_security_group_ids  = var.vpc_security_group_ids != null ? null : [var.vpc_security_group_ids]
 
   attach_network_policy   = true
   timeout                 = 30
