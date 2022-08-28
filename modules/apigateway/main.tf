@@ -151,7 +151,7 @@ resource "aws_lambda_permission" "apigw" {
    source_arn = "${aws_api_gateway_rest_api.apiLambda.execution_arn}/*/*"
 }
 
-resource "aws_lambda_permission" "apigw" {
+resource "aws_lambda_permission" "api_auth_gw" {
   statement_id  = "AllowAPIGatewayAuthorizerInvoke"
   action        = "lambda:InvokeFunction"
   function_name = var.authorizer_name
