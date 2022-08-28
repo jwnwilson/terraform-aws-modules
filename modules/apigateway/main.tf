@@ -151,6 +151,17 @@ resource "aws_lambda_permission" "apigw" {
    source_arn = "${aws_api_gateway_rest_api.apiLambda.execution_arn}/*/*"
 }
 
+resource "aws_lambda_permission" "apigw" {
+  statement_id  = "AllowAPIGatewayAuthorizerInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = var.authorizer_name
+  principal     = "apigateway.amazonaws.com"
+
+  # The "/*/*" portion grants access from any method on any resource
+  # within the API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.apiLambda.execution_arn}/*/*"
+}
+
 
 output "base_url" {
   value = aws_api_gateway_deployment.apideploy.invoke_url
