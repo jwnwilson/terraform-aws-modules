@@ -72,7 +72,7 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
 }
 
 resource "aws_iam_policy" "sqs-s3-lambda-policy" {
-  name        = "sqs-s3-lambda-policy-${var.environment}"
+  name        = "sqs-s3-lambda-policy-${var.project}-${var.environment}"
   description = "allow lambda access to sqs policy"
 
   policy = <<EOF
