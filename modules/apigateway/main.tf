@@ -187,6 +187,11 @@ resource "aws_api_gateway_deployment" "apideploy" {
 
    rest_api_id = aws_api_gateway_rest_api.apiLambda.id
    stage_name  = var.environment
+   stage_description = "Deployed at ${timestamp()}"
+
+   lifecycle {
+    create_before_destroy = true
+  }
 }
 
 
