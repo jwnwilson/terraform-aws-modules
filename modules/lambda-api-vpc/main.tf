@@ -5,6 +5,16 @@ provider "aws" {
   region     = var.region
 }
 
+resource "aws_vpc_endpoint" "pdf_vpc_endpoint" {
+  vpc_id              = var.vpc_id
+  service_name        = "pdf generation service"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+
+  subnet_ids = var.private_subnets
+  security_group_ids = [var.default_security_group_id]
+}
+
 module "lambda" {
   source                  = "terraform-aws-modules/lambda/aws"
 
@@ -16,6 +26,9 @@ module "lambda" {
   image_uri               = "${var.ecr_url}:${var.docker_tag}"
   package_type            = "Image"
   
+  vpc_subnet_ids          = var.vpc_subnet_ids
+  vpc_security_group_ids  = var.vpc_security_group_ids
+
   attach_network_policy   = true
   timeout                 = 30
 
