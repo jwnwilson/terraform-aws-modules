@@ -7,12 +7,6 @@ data "aws_route53_zone" "api_zone" {
   name = var.domain
 }
 
-resource "aws_api_gateway_authorizer" "auth" {
-  name           = "auth"
-  rest_api_id    = aws_api_gateway_rest_api.apiLambda.id
-  authorizer_uri = data.aws_lambda_function.authorizer.invoke_arn
-}
-
 resource "aws_route53_record" "this" {
   name                     = aws_api_gateway_domain_name.this.domain_name
   type                     = "A"
