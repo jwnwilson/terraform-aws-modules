@@ -67,7 +67,6 @@ resource "aws_api_gateway_stage" "this" {
   deployment_id = aws_api_gateway_deployment.apideploy.id
   rest_api_id   = aws_api_gateway_rest_api.apiLambda.id
   stage_name    = var.environment
-  stage_description = "Deployed at ${timestamp()}"
   cache_cluster_enabled = false
   cache_cluster_size = "0.5"
   xray_tracing_enabled = true
@@ -180,20 +179,18 @@ resource "aws_api_gateway_integration" "lambda_root" {
 }
 
 
-# resource "aws_api_gateway_deployment" "apideploy" {
-#    depends_on = [
-#      aws_api_gateway_integration.lambda,
-#      aws_api_gateway_integration.lambda_root,
-#    ]
+resource "aws_api_gateway_deployment" "apideploy" {
+   depends_on = [
+     aws_api_gateway_integration.lambda,
+     aws_api_gateway_integration.lambda_root,
+   ]
 
-#    rest_api_id = aws_api_gateway_rest_api.apiLambda.id
-#    stage_name  = var.environment
-#    stage_description = "Deployed at ${timestamp()}"
+   rest_api_id = aws_api_gateway_rest_api.apiLambda.id
 
-#    lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+   lifecycle {
+    create_before_destroy = true
+  }
+}
 
 
 resource "aws_lambda_permission" "apigw" {
