@@ -7,10 +7,6 @@ data "aws_route53_zone" "api_zone" {
   name = var.domain
 }
 
-data "aws_lambda_function" "authorizer" {
-  function_name = var.authorizer_name
-}
-
 resource "aws_api_gateway_authorizer" "auth" {
   name           = "auth"
   rest_api_id    = aws_api_gateway_rest_api.apiLambda.id
@@ -156,18 +152,6 @@ resource "aws_lambda_permission" "apigw" {
    # within the API Gateway REST API.
    source_arn = "${aws_api_gateway_rest_api.apiLambda.execution_arn}/*/*"
 }
-
-resource "aws_lambda_permission" "api_auth_gw" {
-  statement_id  = "AllowAPIGatewayAuthorizerInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = var.authorizer_name
-  principal     = "apigateway.amazonaws.com"
-
-  # The "/*/*" portion grants access from any method on any resource
-  # within the API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.apiLambda.execution_arn}/*/*"
-}
-
 
 output "base_url" {
   value = aws_api_gateway_deployment.apideploy.invoke_url
