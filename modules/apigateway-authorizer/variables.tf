@@ -9,3 +9,5 @@ variable "project" {}
 variable "domain" {}
 
 variable "api_subdomain" {}
+
+variable "authorizer_name" {}
